@@ -172,6 +172,8 @@ class DocumentosAsociado {
    | ejemplo, en el caso de los FTP, en el nombre del directorio se encuentra el servidor, el       |
    | usuario y la contraseña de acceso al FTP, lo que podría provocar que cualquiera encuentre esos |
    | datos, ya que estaban siendo incluidos en el HTML de la página                                 |
+   +----------------------------------!!! 09-AGO-2023(RJM) -----------------------------------------+
+   | Se agrega Reporte a la funcionalidad de descargas PRODUCTOS_CDTS                               |
    +------------------------------------------------------------------------------------------------*/
    public function getDescargar($parametros) {
       $o_dom = gr_util_XML::getPath("/archivos/documento[k_docume='".$parametros['k_docume']."']", $this->xml_documento);
@@ -217,6 +219,10 @@ class DocumentosAsociado {
             $reporte = new ReporteAportes($this->asociado);
             $reporte->generarDocumento();
          }
+         if ($n_nombre == 'PRODUCTO_CDTS') {
+            $reporte = new ReporteCdts($this->asociado);
+            $reporte->generarDocumento();
+         }
       }
    }
 
@@ -232,8 +238,11 @@ class DocumentosAsociado {
        * | dificil detectarlo                                           |
        * +--------------------------------------------------------------+
        */
-      Excepcion::almacenarError($url, 'F');
-      return is_array($hdrs) ? preg_match('/^HTTP\\/\\d+\\.\\d+\\s+2\\d\\d\\s+.*$/', $hdrs[0]) : false;     
+      //!!! 21-ABR-2022(RIPC) Se deshabilita puesto que no esta registrando el error correctamente. S-294588
+    // Excepcion::almacenarError($url, 'F');
+    // !!! 21-ABR-2022(RIPC) Se incluye el parámetro 'ERROR_WEB' para el registro del error. S-294588
+    Excepcion::almacenarError($url, 'ERROR_WEB', 'F');
+      return is_array($hdrs) ? preg_match('/^HTTP\\/\\d+\\.\\d+\\s+2\\d\\d\\s+.*$/', $hdrs[0]) : false;
    }
 
    public function asHtml() {

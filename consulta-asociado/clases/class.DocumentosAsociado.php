@@ -172,8 +172,10 @@ class DocumentosAsociado {
    | ejemplo, en el caso de los FTP, en el nombre del directorio se encuentra el servidor, el       |
    | usuario y la contraseña de acceso al FTP, lo que podría provocar que cualquiera encuentre esos |
    | datos, ya que estaban siendo incluidos en el HTML de la página                                 |
-   +----------------------------------!!! 09-AGO-2023(RJM) -----------------------------------------+
+   +--------------------------------- !!! 09-AGO-2023(RJM) -----------------------------------------+
    | Se agrega Reporte a la funcionalidad de descargas PRODUCTOS_CDTS                               |
+   +--------------------------------- !!! 04-JUL-2024(RJM) -----------------------------------------+
+   |Se agrega a la funcionalidad el reporte grupo ReporteGrFamiliar                                 |
    +------------------------------------------------------------------------------------------------*/
    public function getDescargar($parametros) {
       $o_dom = gr_util_XML::getPath("/archivos/documento[k_docume='".$parametros['k_docume']."']", $this->xml_documento);
@@ -221,6 +223,10 @@ class DocumentosAsociado {
          }
          if ($n_nombre == 'PRODUCTO_CDTS') {
             $reporte = new ReporteCdts($this->asociado);
+            $reporte->generarDocumento();
+         }
+         if ($n_nombre == 'GRUPO_FAMILIAR') {
+            $reporte = new ReporteGrFamiliar($this->asociado);
             $reporte->generarDocumento();
          }
       }

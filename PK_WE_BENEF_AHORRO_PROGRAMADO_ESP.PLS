@@ -21,7 +21,7 @@ CREATE OR REPLACE PACKAGE PK_WE_BENEF_AHORRO_PROGRAMADO IS
       |  tercero que recibe como parametro                                     |
       +--------------------------------- --------------------------------------+ */  
    PROCEDURE pr_info_benef_json(v_k_idterc   NUMBER,
-                                o_json IN OUT CLOB);
+                                n_json IN OUT CLOB);
 
     /* +-----------------------!!! 12-FEB-2013 (ACCV)---------------------------+
       | PROCEDURE pr_informacion_beneficiarios                                  |

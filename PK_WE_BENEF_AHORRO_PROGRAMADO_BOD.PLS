@@ -21,19 +21,17 @@ CREATE OR REPLACE PACKAGE BODY PK_WE_BENEF_AHORRO_PROGRAMADO IS
       |  tercero que recibe como parametro                                     |
       +--------------------------------- --------------------------------------+ */  
    PROCEDURE pr_info_benef_json(v_k_idterc   NUMBER,
-                                o_json IN OUT CLOB) IS
+                                n_json IN OUT CLOB) IS
                                 
       r_gr001   gr001mtercero%ROWTYPE;
       t_gr1068  pk_gr_gr1068.ty_t_gr1068;
       c_loop    NUMBER;
       jsondoc       JSON;
-      jsonroot      JSON;
       jsonaux       JSON;
       jsonlist      JSON_LIST;                                               
    BEGIN
 
       jsondoc       := JSON;
-      jsonroot      := JSON;
       jsonaux       := JSON;
       jsonlist      := JSON_LIST;
       
@@ -67,15 +65,14 @@ CREATE OR REPLACE PACKAGE BODY PK_WE_BENEF_AHORRO_PROGRAMADO IS
          jsonaux.put('A_EXCLUIR', 'N');
          jsonaux.put('V_PORCENTAJE_BEN', '');
          jsonaux.put('A_BENEFICIARIO', 'N');
-         jsonaux.put('A_ACCION', 'N');
-         jsonroot.put('R_RegistroFamiliar', jsonaux.TO_JSON_VALUE);        
-         jsonlist.append(jsonroot.TO_JSON_VALUE);
+         jsonaux.put('A_ACCION', 'N');        
+         jsonlist.append(jsonaux.TO_JSON_VALUE);
          c_loop := t_gr1068.NEXT(c_loop);
       END LOOP;
       
       jsondoc.put('informacion_beneficiario', jsonlist);
-      DBMS_LOB.CREATETEMPORARY(o_json, CACHE => TRUE);
-      jsondoc.TO_CLOB(o_json);
+      DBMS_LOB.CREATETEMPORARY(n_json, CACHE => TRUE);
+      jsondoc.TO_CLOB(n_json);
       
    EXCEPTION WHEN OTHERS THEN
       pk_gr_control_error.pr_control_error (dbms_utility.format_error_backtrace()||' '||SQLERRM, SQLCODE,'CONSULTA',SQLERRM,'AH');

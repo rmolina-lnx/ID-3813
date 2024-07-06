@@ -34,29 +34,40 @@ class ReporteGrFamiliar
     /*======================*
      | Cabecera del reporte |
      *======================*/
-    $sql = "DECLARE BEGIN pk_we_general.pr_traer_licencia(:xml); END;";
-    $parametros = [ 'xml' => ['valor' => '', 'longitud' => 'CLOB'] ];
+    /*$sql = "DECLARE BEGIN pk_we_gr_consulta_lincencia.pr_consulta(:p_x_json); END;";
+    $parametros = array('p_x_json' => array('valor' => '', 'longitud' => 'CLOB'));
 
-    $info3 = Configurar::getDb()->ejecutaSentencia( $sql, $parametros );
+    Configurar::getDb()->ejecutaSentencia($sql, $parametros);
+    $this->imprimirVariable($variable);
+    $json = utf8_encode($parametros['p_x_json']['valor']);
+    $array_json = json_decode($json, true);
+
+    $options = ['justification' => 'center'];
+    $pdf->ezText("\n\n\n\n\n\n\n\n<b>{$datos['N_LICENC']}</b>", 12, $options);
+    $pdf->ezText("<b>Nit: {$datos['K_NUMNIT']}- {$datos['I_DIGITO']}\n\nCERTIFICA QUE:</b>", 12, $options);*/
+    
     $options = ['justification' => 'center'];
     $pdf->ezText("\n\n\n\n\n\n\n\n<b>COOPERATIVA CEMCOP</b>", 12, $options);
     $pdf->ezText("<b>Nit: 890.301.310-1\n\nCERTIFICA QUE:</b>", 12, $options);
 
+    /*=======================*
+     | contenido del reporte |
+     *=======================*/
     $options = ['justification' => 'full'];
     $introduccion = "\n\n\nEl(la) asociado <b>{$this->asociado->getNnasocia()}</b> identificado(a) con Cédula de Ciudadanía No.<b> {$this->asociado->getAanumnit()}</b>, quien se encuentra vinculado a la Cooperativa desde el(los) {$this->asociado->getF_afilia()}, presenta al {$this->asociado->getAcceso()} la siguiente información en su grupo familiar:\n\n";
     $pdf->ezText($introduccion, 11, $options);
-    
-    /*==========================*
-     | Informacion de la grilla |
-     *==========================*/
-    $sql = "BEGIN pk_we_benef_ahorro_programado.pr_info_benef_json(:p_k_idterc,:p_json); END;";
+
+    /*====================*
+     | grilla del Reporte |
+     *====================*/
+    $sql = "BEGIN pk_we_benef_ahorro_programado.pr_info_benef_json(:p_k_idterc,:p_x_json); END;";
     $parametrosSql = [ 
       'p_k_idterc' => ['valor' => $this->asociado->getK_idterc(), 'longitud' => -1],
-      'p_json'     => ['valor' => '', 'longitud' => 'CLOB']
+      'p_x_json'   => ['valor' => '', 'longitud' => 'CLOB']
     ];
 
     Configurar::getDb()->ejecutaSentencia($sql, $parametrosSql);
-    $datos = json_decode($parametrosSql['p_json']['valor'], true);
+    $datos = json_decode($parametrosSql['p_x_json']['valor'], true);
 
     $datosTabla = array_map(
        function ($beneficiario) {
@@ -95,6 +106,9 @@ class ReporteGrFamiliar
 
     $pdf->ezTable($datosTabla,$titulosTabla,'',$opcionesTabla);
 
+    /*============================*
+     | parte inferiror del reporte |
+     *============================*/
     $texto= "Se expide el día {$this->asociado->getAcceso()}.
     \n\nSe omite firma autógrafa según Art. 10 del D.R. 836/91.";
 

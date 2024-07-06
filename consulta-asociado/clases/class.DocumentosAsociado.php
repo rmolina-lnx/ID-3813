@@ -225,7 +225,7 @@ class DocumentosAsociado {
             $reporte = new ReporteCdts($this->asociado);
             $reporte->generarDocumento();
          }
-         if ($n_nombre == 'GRUPO_FAMILIAR') {
+         if ($n_nombre == 'CERTIFICADO_GRUPO_FAMILIAR') {
             $reporte = new ReporteGrFamiliar($this->asociado);
             $reporte->generarDocumento();
          }

@@ -43,12 +43,12 @@ class ReporteGrFamiliar
     $pdf->ezText("<b>Nit: 890.301.310-1\n\nCERTIFICA QUE:</b>", 12, $options);
 
     $options = ['justification' => 'full'];
-    $introduccion = "\n\n\nEl(la) asociado <b>{$this->asociado->getNnasocia()}</b> identificado(a) con Cédula de Ciudadanía No.<b> {$this->asociado->getAanumnit()}</b>, es asociado(a) a la Cooperativa CEMCOP NIT. 890.301.310-1 desde {$this->asociado->getF_afilia()}.\n\n";
+    $introduccion = "\n\n\nEl(la) asociado <b>{$this->asociado->getNnasocia()}</b> identificado(a) con Cédula de Ciudadanía No.<b> {$this->asociado->getAanumnit()}</b>, quien se encuentra vinculado a la Cooperativa desde el(los) {$this->asociado->getF_afilia()}, presenta al {$this->asociado->getAcceso()} la siguiente información en su grupo familiar:\n\n";
     $pdf->ezText($introduccion, 11, $options);
-
-    /*=========================*
-     | Informacion de la grilla|
-     *=========================*/
+    
+    /*==========================*
+     | Informacion de la grilla |
+     *==========================*/
     $sql = "BEGIN pk_we_benef_ahorro_programado.pr_info_benef_json(:p_k_idterc,:p_json); END;";
     $parametrosSql = [ 
       'p_k_idterc' => ['valor' => $this->asociado->getK_idterc(), 'longitud' => -1],
@@ -71,8 +71,9 @@ class ReporteGrFamiliar
     
     $titulosTabla = [
        'A_CODIGO_CLIENTE' => '<b>Identificación</b>',
-       'A_PARENTESCO_D'   => '<b>Parentesco</b>',
-       'N_BENEFI_D'       => '<b>Beneficiario</b>'
+       'N_BENEFI_D'       => '<b>Beneficiario</b>',
+       'A_PARENTESCO_D'   => '<b>Parentesco</b>'
+       
     ];
 
     $opcionesTabla = [
@@ -82,7 +83,7 @@ class ReporteGrFamiliar
        'shadeCol' => [0.9, 0.9, 0.9],
        'fontSize' => 11,
        'titleFontSize' => 14,
-       'xOrientation' => 'center',
+       'xOrientation'  => 'center',
        'xPos'  => 'center',
        'width' => 400,
        'cols'  => [

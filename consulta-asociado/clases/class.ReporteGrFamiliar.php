@@ -1,6 +1,6 @@
 <?php
 /**
- * +---------------------------------------------------------------------------+
+ * +-------------------------- 04-JUL-2024 (RJM) ------------------------------+
  * | Creación   04-JUL-2024                                                    |
  * +---------------------------------------------------------------------------+
  *
@@ -13,101 +13,102 @@
 
 require_once(Configurar::getDirInclude() . 'pdf/class.Cpdf.php');
 require_once(Configurar::getDirInclude() . 'pdf/class.Cezpdf.php');
+
 class ReporteGrFamiliar
 {
 
   private $asociado;
 
-  public function __construct($gr_nucleo_Asociado){
-   $this->asociado = $gr_nucleo_Asociado;
+  public function __construct($Asociado){
+   $this->asociado = $Asociado;
   }
 
-  public function generarDocumento($n_dia){
+  public function generarDocumento(){
     Configurar::addPath("/include/pdf", ".php", "class.");
     $pdf = & new Cezpdf('LETTER');
     $pdf->selectFont(APLICACION_DIR . '/include/pdf/fonts/Helvetica.afm');
-    $pdf->addJpegFromFile(APLICACION_DIR.'/web/imagen/'.Configuracion::getLogo(), 400,700,200,75);
+    $pdf->addJpegFromFile(APLICACION_DIR.'/web/imagen/'.Configuracion::getLogo(), 40, 680,120,83);
+    $pdf->addJpegFromFile(APLICACION_DIR.'/web/imagen/firma.JPG', 25, 170,105,105);
+    $pdf->addJpegFromFile(APLICACION_DIR.'/web/imagen/vigilado_fogacoop.jpg', 2, 150,25,210);
 
     /*======================*
      | Cabecera del reporte |
      *======================*/
+    $sql = "DECLARE BEGIN pk_we_general.pr_traer_licencia(:xml); END;";
+    $parametros = [ 'xml' => ['valor' => '', 'longitud' => 'CLOB'] ];
 
-     $style = array('text-align'=>'center');
-     $sql = "DECLARE BEGIN pk_we_general.pr_traer_licencia(:xml); END;";
-     $parametross = array('xml' => array('valor' => '', 'longitud' => 'CLOB'));
-      $info3 = Configurar::getDb()->ejecutaSentencia( $sql, $parametross );
-     $resultado=utf8_encode($parametross['xml']['valor']);
-      
+    $info3 = Configurar::getDb()->ejecutaSentencia( $sql, $parametros );
+    $options = ['justification' => 'center'];
+    $pdf->ezText("\n\n\n\n\n\n\n\n<b>COOPERATIVA CEMCOP</b>", 12, $options);
+    $pdf->ezText("<b>Nit: 890.301.310-1\n\nCERTIFICA QUE:</b>", 12, $options);
 
-    $options = array('justification'=>'center');
-    $pdf->ezText("<b>\n\n\n\n\n\n\n\n{$parametross['xml']['valor']}</b>", 12, $options);
-    $pdf->ezText("\n\nCERTIFICA QUE:", 12, $options);
-
-    $options = array('justification'=>'left');
-    $introduccion = utf8_decode("\n\n\n\nEl(la) señor(a) <b>{$this->asociado->getNnasocia()}</b> Identificado(a) con la Cédula de Ciudadanía No.<b> {$this->asociado->getAanumnit()}</b>, en su calidad de Asociado a {$resultado} desde el(los) {$this->asociado->getF_afilia()}, a la fecha se encuentra a <b>PAZ Y SALVO</b> por la(s) siguiente(s) obligacion(es) de crédito:"); 
+    $options = ['justification' => 'full'];
+    $introduccion = "\n\n\nEl(la) asociado <b>{$this->asociado->getNnasocia()}</b> identificado(a) con Cédula de Ciudadanía No.<b> {$this->asociado->getAanumnit()}</b>, es asociado(a) a la Cooperativa CEMCOP NIT. 890.301.310-1 desde {$this->asociado->getF_afilia()}.\n\n";
     $pdf->ezText($introduccion, 11, $options);
 
+    /*=========================*
+     | Informacion de la grilla|
+     *=========================*/
+    $sql = "BEGIN pk_we_benef_ahorro_programado.pr_info_benef_json(:p_k_idterc,:p_json); END;";
+    $parametrosSql = [ 
+      'p_k_idterc' => ['valor' => $this->asociado->getK_idterc(), 'longitud' => -1],
+      'p_json'     => ['valor' => '', 'longitud' => 'CLOB']
+    ];
 
-    $sql = "DECLARE BEGIN pk_we_consulta.pr_estado_cuenta( :kIdterc,'TRUE',:xml,SYSDATE); END;";
-    $parametros = array('xml' => array('valor' => '', 'longitud' => 'CLOB'),
-    'kIdterc'  => array('valor' => $this->asociado->getK_idterc(), 'longitud' => -1));
+    Configurar::getDb()->ejecutaSentencia($sql, $parametrosSql);
+    $datos = json_decode($parametrosSql['p_json']['valor'], true);
 
-    $info = Configurar::getDb()->ejecutaSentencia($sql, $parametros);
-    $domPdf = gr_util_XML::getPath("/estado_cuenta/cartera_cancelada", utf8_encode($parametros['xml']['valor']));
-    $gr_util_XmlToArray = new gr_util_XmlToArray($domPdf->saveXML());
-    $array = $gr_util_XmlToArray->createArray();
+    $datosTabla = array_map(
+       function ($beneficiario) {
+          return [
+             'A_CODIGO_CLIENTE' => utf8_decode($beneficiario['A_CODIGO_CLIENTE']),
+             'A_PARENTESCO_D'   => utf8_decode($beneficiario['A_PARENTESCO_D']),
+             'N_BENEFI_D'       => utf8_decode("{$beneficiario['A_PRIMER_NOMBRE']} {$beneficiario['A_SEGUNDO_NOMBRE']} {$beneficiario['A_PRIMER_APELLIDO']} {$beneficiario['A_SEGUNDO_APELLIDO']}") 
+          ];
+       },
+       $datos['informacion_beneficiario']
+    );
+    
+    $titulosTabla = [
+       'A_CODIGO_CLIENTE' => '<b>Identificación</b>',
+       'A_PARENTESCO_D'   => '<b>Parentesco</b>',
+       'N_BENEFI_D'       => '<b>Beneficiario</b>'
+    ];
 
-    $titles = array(
-          'a_tipodr' => '<b>Credito</b>',
-          'n_modali' => '<b>Modalidad</b>',
-                    'f_cancel' => '<b>Fec. Cancel</b>');
+    $opcionesTabla = [
+       'showLines'    => 1,
+       'showHeadings' => 1,
+       'shaded'   => 1,
+       'shadeCol' => [0.9, 0.9, 0.9],
+       'fontSize' => 11,
+       'titleFontSize' => 14,
+       'xOrientation' => 'center',
+       'xPos'  => 'center',
+       'width' => 400,
+       'cols'  => [
+          'A_CODIGO_CLIENTE' => ['justification' => 'center'],
+          'A_PARENTESCO_D'   => ['justification' => 'center'],
+          'N_BENEFI_D'       => ['justification' => 'center']
+        ]
+    ];
 
-    $fecha =  strtotime($this->resta_fechas(date("m/d/Y"),$n_dia));
+    $pdf->ezTable($datosTabla,$titulosTabla,'',$opcionesTabla);
 
-    for( $i=0; $i<count($array['cartera_cancelada']['registro']);$i++){
+    $texto= "Se expide el día {$this->asociado->getAcceso()}.
+    \n\nSe omite firma autógrafa según Art. 10 del D.R. 836/91.";
 
-      $fecha2 = $array['cartera_cancelada']['registro'][$i]['f_cancel'];
-      $fecha2 = strtotime(date('m/d/Y', strtotime($fecha2)));
+    $pdf->ezText("\n\n\n\n".$texto, 11, $options);
+    
+    $pdf->ezText("\nSi requiere confirmar información suministrada en este certificado puede comunicarse con nuestra sede principal en Cali Tel: 489 05 82", 11, $options);
+    
+    $options = ['justification'=>'center'];
 
-
-      if($fecha <= $fecha2){
-         $array2['cartera_cancelada']['registro'][$i]['a_tipodr'] = $array['cartera_cancelada']['registro'][$i]['a_tipodr']." ".
-                                                                   $array['cartera_cancelada']['registro'][$i]['a_obliga'];
-         $array2['cartera_cancelada']['registro'][$i]['n_modali'] = $array['cartera_cancelada']['registro'][$i]['n_modali'];
-         $array2['cartera_cancelada']['registro'][$i]['f_cancel'] = $array['cartera_cancelada']['registro'][$i]['f_cancel'];
-      }
-
-    }
-
-    $options = array('fontSize' => 9);
-if($n_dia != 1){
-    $pdf->ezTable($array2['cartera_cancelada']['registro'], $titles, ' ', $options);
-}else{
-    $pdf->ezTable($array['cartera_cancelada']['registro'], $titles, ' ', $options);
-}
-
-
-    $nota=utf8_decode("<b>Nota: El {$resultado} se reserva la posibilidad de efectuar el cobro de cualquier transacción realizada y no cobrada con anterioridad y que se encuentre debidamente documentada y contabilizada con posterior a la presente fecha. </b>");
-    $pdf->ezText("\n\n\n\n".$nota, 11, $options);
-
-    $hoy = date("d");
-   $ano = date("Y");
-   $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-
-   $texto= utf8_decode("La presente certificación se expide a solicitud del interesado(a) a los {$hoy} día(as) del mes de {$meses[date('n')-1]} del {$ano}.");
-    $pdf->ezText("\n\n\n".$texto, 11, $options);
-
-    $pdf->ezText("\n\n\n\n\nCordialmente,", 11, $options);
-   
     $firma =Configurar::getParametros()->getParametro("VS", 66)->getO_alfabe();
     $cargo = Configurar::getParametros()->getParametro("VS", 67)->getO_alfabe();
-    $pdf->ezText("\n\n\n\n\n".$firma."\n".$cargo,11,$options);
-    $parametros=array("Content-Disposition"=>"CERTIFICADO_GR_FAMILIAR.pdf","Accept-Ranges"=>1);
-
 
 /*prueba*/
 
-    header('Content-Description: File Transfer target: "_blank"');
+    /*header('Content-Description: File Transfer target: "_blank"');
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename=CERTIFICADO_GR_FAMILIAR.pdf');
     header('Content-Transfer-Encoding: binary');
@@ -117,43 +118,19 @@ if($n_dia != 1){
     ob_clean();
     flush();
     readfile($pdf->ezStream());
-    exit;
+    exit;*/
 
 /*fin prueba*/
-   // $pdf->ezStream($parametros);
-die;
+
+    $pdf->ezStream($parametros);
+    die;
 
   }
 
-    
-  function resta_fechas($fecha,$ndias){
-      if (preg_match("/[0-9]{1,2}\/[0-9]{1,2}\/([0-9][0-9]){1,2}/",$fecha)){
-              list($mes,$dia,$ano)=preg_split("/\//", $fecha);
-      }
-
-      if (preg_match("/[0-9]{1,2}-[0-9]{1,2}-([0-9][0-9]){1,2}/",$fecha)){
-              list($mes,$dia,$ano)=preg_split("/-/",$fecha);
-      }
-
-      $nueva = mktime(0,0,0, $mes,$dia,$ano) - $ndias * 24 * 60 * 60;
-      $nuevafecha=date("m/d/Y",$nueva);
-
-      return $nuevafecha;
-    }
-
-
-    private function removeFromArray(&$array, $key){
-       echo "eliminando<br />";
-       foreach($array as $j=>$i){
-          echo "recorriendo -".$i."- ".$key."<br/>";
-          print_r($array);
-          die;
-          if($i == $key){
-             echo "encontrado: ".$i." = ".$key;
-             die;
-             return true;
-             break;
-          }
-       }
-   }
+  private function imprimirVariable($variable) {
+    print_r('<pre>');
+    print_r($variable);
+    print_r('</pre>');
+    die();
+  }  
 }

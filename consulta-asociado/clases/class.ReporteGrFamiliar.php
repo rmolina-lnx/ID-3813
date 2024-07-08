@@ -118,9 +118,10 @@ class ReporteGrFamiliar
     $firma =Configurar::getParametros()->getParametro("VS", 66)->getO_alfabe();
     $cargo = Configurar::getParametros()->getParametro("VS", 67)->getO_alfabe();
 
-/*prueba*/
-
-    /*header('Content-Description: File Transfer target: "_blank"');
+    /*==========================================*
+     | configuraciones para la descarga del PDF |
+     *==========================================*/
+    header('Content-Description: File Transfer target: "_blank"');
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename=CERTIFICADO_GR_FAMILIAR.pdf');
     header('Content-Transfer-Encoding: binary');
@@ -130,19 +131,7 @@ class ReporteGrFamiliar
     ob_clean();
     flush();
     readfile($pdf->ezStream());
-    exit;*/
-
-/*fin prueba*/
-
-    $pdf->ezStream($parametros);
-    die;
-
+    exit;
   }
-
-  private function imprimirVariable($variable) {
-    print_r('<pre>');
-    print_r($variable);
-    print_r('</pre>');
-    die();
-  }  
+  
 }

@@ -34,22 +34,19 @@ class ReporteGrFamiliar
     /*======================*
      | Cabecera del reporte |
      *======================*/
-    /*$sql = "DECLARE BEGIN pk_we_gr_consulta_lincencia.pr_consulta(:p_x_json); END;";
-    $parametros = array('p_x_json' => array('valor' => '', 'longitud' => 'CLOB'));
+    $sql = "DECLARE BEGIN pk_we_gr_consulta_lincencia.pr_consulta(:p_x_json); END;";
+    $parametrosSql = array('p_x_json' => array('valor' => '', 'longitud' => 'CLOB'));
 
-    Configurar::getDb()->ejecutaSentencia($sql, $parametros);
-    $this->imprimirVariable($variable);
-    $json = utf8_encode($parametros['p_x_json']['valor']);
-    $array_json = json_decode($json, true);
+    Configurar::getDb()->ejecutaSentencia($sql, $parametrosSql);
+    
 
-    $options = ['justification' => 'center'];
-    $pdf->ezText("\n\n\n\n\n\n\n\n<b>{$datos['N_LICENC']}</b>", 12, $options);
-    $pdf->ezText("<b>Nit: {$datos['K_NUMNIT']}- {$datos['I_DIGITO']}\n\nCERTIFICA QUE:</b>", 12, $options);*/
+    $json = utf8_encode($parametrosSql['p_x_json']['valor']);
+    $datos = json_decode($json, true);
     
     $options = ['justification' => 'center'];
-    $pdf->ezText("\n\n\n\n\n\n\n\n<b>COOPERATIVA CEMCOP</b>", 12, $options);
-    $pdf->ezText("<b>Nit: 890.301.310-1\n\nCERTIFICA QUE:</b>", 12, $options);
-
+    $pdf->ezText("\n\n\n\n\n\n\n\n<b>{$datos['N_LICENC']}</b>", 12, $options);
+    $pdf->ezText("<b>Nit: {$datos['K_NUMNIT']}- {$datos['I_DIGITO']}\n\nCERTIFICA QUE:</b>", 12, $options);
+    
     /*=======================*
      | contenido del reporte |
      *=======================*/

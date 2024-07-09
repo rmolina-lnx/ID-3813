@@ -153,8 +153,5 @@ CREATE OR REPLACE PACKAGE BODY PK_WE_BENEF_AHORRO_PROGRAMADO IS
       pk_gr_control_error.pr_control_error (dbms_utility.format_error_backtrace()||' '||SQLERRM, SQLCODE,'CONSULTA',SQLERRM,'AH');
       RAISE_APPLICATION_ERROR( -20000,dbms_utility.format_error_backtrace()||' '||SQLERRM);
    END pr_informacion_beneficiarios;
-   
-
 
 END;
-/

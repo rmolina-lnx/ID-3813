@@ -33,4 +33,3 @@ CREATE OR REPLACE PACKAGE PK_WE_BENEF_AHORRO_PROGRAMADO IS
                                           o_xml IN OUT CLOB);
 
 END;
-/

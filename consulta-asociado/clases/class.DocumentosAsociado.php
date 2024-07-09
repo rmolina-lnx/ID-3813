@@ -165,13 +165,13 @@ class DocumentosAsociado {
    /*---------------------------------!!! 28-MAR-2014(ACCV) ----------------------------------------+
    | Se modifica para que el directorio desde el cual descargar el archivo, sea el que se encuentra |
    | asociado al documento descargado, porque antes se tomaba el mismo directorio para todos los    |
-   | documentos, y no hab√≠a ninguna consideraci√≥n para esa desici√≥n                                 |
+   | documentos, y no habÌa ninguna consideraciÛn para esa desiciÛn                                 |
    +----------------------------------!!! 09-MAR-2017(ACCV) ----------------------------------------+
-   | Se modifica para que los datos del documentos, los deduzca del XML que est√° cargado en memoria |
-   | en la clase PHP, en lugar de recibirlos como par√°metros desde el formulario, debido a que, por |
+   | Se modifica para que los datos del documentos, los deduzca del XML que est· cargado en memoria |
+   | en la clase PHP, en lugar de recibirlos como par·metros desde el formulario, debido a que, por |
    | ejemplo, en el caso de los FTP, en el nombre del directorio se encuentra el servidor, el       |
-   | usuario y la contrase√±a de acceso al FTP, lo que podr√≠a provocar que cualquiera encuentre esos |
-   | datos, ya que estaban siendo incluidos en el HTML de la p√°gina                                 |
+   | usuario y la contraseÒa de acceso al FTP, lo que podrÌa provocar que cualquiera encuentre esos |
+   | datos, ya que estaban siendo incluidos en el HTML de la p·gina                                 |
    +--------------------------------- !!! 09-AGO-2023(RJM) -----------------------------------------+
    | Se agrega Reporte a la funcionalidad de descargas PRODUCTOS_CDTS                               |
    +--------------------------------- !!! 04-JUL-2024(RJM) -----------------------------------------+
@@ -239,15 +239,15 @@ class DocumentosAsociado {
 
      /*
        * +---------------------!!! 08-ENE-2014 -------------------------+
-       * | Se almacena la direcci√≥n como error por petici√≥n de Carlos   |
-       * | C√≥mbita, debido a que cuando se presentar alg√∫n error, es muy|
+       * | Se almacena la direcciÛn como error por peticiÛn de Carlos   |
+       * | CÛmbita, debido a que cuando se presentar alg˙n error, es muy|
        * | dificil detectarlo                                           |
        * +--------------------------------------------------------------+
        */
       //!!! 21-ABR-2022(RIPC) Se deshabilita puesto que no esta registrando el error correctamente. S-294588
-    // Excepcion::almacenarError($url, 'F');
-    // !!! 21-ABR-2022(RIPC) Se incluye el par√°metro 'ERROR_WEB' para el registro del error. S-294588
-    Excepcion::almacenarError($url, 'ERROR_WEB', 'F');
+	  // Excepcion::almacenarError($url, 'F');
+	  // !!! 21-ABR-2022(RIPC) Se incluye el par·metro 'ERROR_WEB' para el registro del error. S-294588
+	  Excepcion::almacenarError($url, 'ERROR_WEB', 'F');
       return is_array($hdrs) ? preg_match('/^HTTP\\/\\d+\\.\\d+\\s+2\\d\\d\\s+.*$/', $hdrs[0]) : false;
    }
 

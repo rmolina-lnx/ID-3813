@@ -1,0 +1,32 @@
+DESCRIPCION: 
+ 
+INCLUSIÓN DEL CERTIFICADO DEL GRUPO FAMILIAR EN LOS DOCUMENTOS PARA DESCARGA Y NUEVA 
+FUNCIONALIDAD PARA DATOS DEL NÚCLEO FAMILIAR
+ 
+INSTRUCCIONES DE INSTALACION: 
+ 
+1.  INGRESAR POR SQL/PLUS Y EJECUTAR 
+   
+        directorio\instruccion.sql;
+
+   %%%%% NOTA: La palabra directorio reemplácela por el path completo del 
+               directorio de su disco duro, en el cual quedaron copiados 
+               todos los archivos de ésta actualización. 
+
+   Ejemplo: Si el directorio se llama c:\copia, la instrucción que se ejecute
+            en SQL/PLUS debe quedar de la siguiente manera: 
+
+   start c:\copia\instruccion.sql;
+
+   La palabra instrucción reemplácela por el archivo punto sql del directorio del disco
+  duro, en el cual quedaron copiados todos los archivos de ésta actualización.
+
+  start c:\directorio\
+  12963GOMOVGESWE_NEW_v62.SQL
+ 
+2. Copiar la carpeta CONSULTA-ASOCIADOS, manteniendo los archivos en la subcarpeta que les corresponde de acuerdo con la jerarquia de archivos
+ 
+    CONSULTA-ASOCIADO\CLASES\CLASS.DOCUMENTOSASOCIADO.PHP
+ 
+ 
+  LEER EL ARCHIVO DE INSTRUCCIONES ADJUNTO : 12963GOMOVGESWE_NEW_v62.HTM
